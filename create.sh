@@ -7,8 +7,8 @@ if [ -z "$1" ] || [ $# -ne 1 ]; then
 fi
 
 # Assign the argument to a variable
-CONTAINER_NAME = "$1"
-IMAGE_NAME = ${CONTAINER_NAME}-dev-environment:latest
+CONTAINER_NAME="$1"
+IMAGE_NAME=${CONTAINER_NAME}-dev-environment:latest
 
 # check if the image exists, and create it if not
 if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
@@ -20,7 +20,7 @@ if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
         exit 1
     fi
 
-    docker build --build-arg HOST_UID=$(id -u) -t "$IMAGE_NAME".
+    docker build --build-arg HOST_UID=$(id -u) -t "$IMAGE_NAME" .
     if [ $? -ne 0 ]; then
         echo "Error: Failed to build the Docker image."
         exit 1
