@@ -37,6 +37,10 @@ if [ ! -d "config" ]; then
     mkdir config
 fi
 
+# create "attach.sh" script for attaching to detached container
+printf "#!/bin/bash\ndocker exec -it ${CONTAINER_NAME}-dev-container /usr/bin/fish" > attach.sh
+chmod +x attach.sh
+
 # Run the Docker container
 docker run -d --net=host \
     --platform linux/amd64 \

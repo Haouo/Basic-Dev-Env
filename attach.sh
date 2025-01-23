@@ -1,1 +1,0 @@
-docker exec -it haouo-dev-container /usr/bin/fish
