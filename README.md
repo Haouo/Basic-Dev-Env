@@ -4,7 +4,7 @@ This is a repository which provides the Dockerfile for basic development environ
 
 ## Usage
 
-1. Firstly, we have to build the image on the host<br>
+1. At the beginning, we have to build the image on the host<br>
     `./create.sh <container name you want>`
-2. Secondly, we attach on the container with fish shell<br>
+2. After executing create.sh, it will generate `attach.sh` automatically, then you can now attach to the container via execute `attach.sh`<br>
     `./attach.sh`
