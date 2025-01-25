@@ -51,7 +51,6 @@ docker run -d --net=host \
     --platform linux/amd64 \
     --env DISPLAY=$DISPLAY \
     --volume /tmp/.X11-unix:/tmp/.X11-unix \
-    --volume ~/.ssh:/home/ubuntu/.ssh \
     --volume ${VOLUME_NAME}:/home/ubuntu/workspace \
     --name "${CONTAINER_NAME}-dev-container" \
     "${CONTAINER_NAME}-dev-environment:latest"
