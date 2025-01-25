@@ -13,7 +13,7 @@ IMAGE_NAME=${CONTAINER_NAME}-dev-environment:latest
 # check if the image exists, and create it if not
 if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
     echo "Docker image '$IMAGE_NAME' not found. Building..."
-    
+
     # Ensure a Dockerfile exists before building
     if [ ! -f "./Dockerfile" ]; then
         echo "Error: No Dockerfile found in the current directory."
@@ -28,24 +28,29 @@ if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
 fi
 
 # Check if the 'workspace' and 'config' directories exists, create it if not
-if [ ! -d "workspace" ]; then
-    echo "Creating 'workspace' directory..."
-    mkdir workspace
-fi
-if [ ! -d "config" ]; then
-    echo "Creating 'config' directory..."
-    mkdir config
-fi
+# if [ ! -d "workspace" ]; then
+    # echo "Creating 'workspace' directory..."
+    # mkdir workspace
+# fi
 
 # create "attach.sh" script for attaching to detached container
 printf "#!/bin/bash\ndocker exec -it ${CONTAINER_NAME}-dev-container /usr/bin/fish" > attach.sh
 chmod +x attach.sh
 
+# create docker volume
+VOLUME_NAME="${CONTAINER_NAME}-workspace-volume"
+if ! docker volume inspect "$VOLUME_NAME" > /dev/null 2>&1; then
+    echo "Creating docker volume..."
+    docker volume create ${CONTAINER_NAME}-workspace-volume
+else
+    echo "Volume $VOLUME_NAME already exists."
+fi
+
 # Run the Docker container
 docker run -d --net=host \
     --platform linux/amd64 \
-    -v ~/.ssh:/home/ubuntu/.ssh \
-    -v ./workspace:/home/ubuntu/workspace \
-    -v ./config:/home/ubuntu/.config \
+    --env DISPLAY=$DISPLAY \
+    --volume /tmp/.X11-unix:/tmp/.X11-unix \
+    --volume ~/.ssh:/home/ubuntu/.ssh \
     --name "${CONTAINER_NAME}-dev-container" \
     "${CONTAINER_NAME}-dev-environment:latest"

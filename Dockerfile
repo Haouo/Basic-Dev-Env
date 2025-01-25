@@ -20,16 +20,8 @@ RUN wget https://github.com/zellij-org/zellij/releases/download/v0.40.1/zellij-x
     tar xvf zellij*.tar.gz && mv zellij /usr/local/bin && \
     rm zellij*.tar.gz
 
-# set current user 
-RUN groupmod -g ${HOST_UID} ubuntu && \
-    usermod -u ${HOST_UID} ubuntu && \
-    echo "ubuntu:1234" | chpasswd 
-# setup z shell and oh-my-zsh
-ENV ZSH_CUSTOM=/home/ubuntu/.oh-my-zsh/custom
-RUN export ZSH=/home/ubuntu/.oh-my-zsh && \
-    echo "y" | sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" && \
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions && \
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+# change password of built-in ubuntu user
+RUN echo "ubuntu:1234" | chpasswd
 # install useful tools for command-line
 RUN apt-get update && apt-get install -y fzf bat fd-find silversearcher-ag && apt-get clean && apt-get autoclean && \
     wget https://github.com/AlDanial/cloc/releases/download/v2.00/cloc-2.00.tar.gz && tar zxvf cloc*.tar.gz -C /opt && rm -rf cloc*.tar.gz && \
@@ -39,14 +31,14 @@ ENV PATH="/opt/cloc-2.00:$PATH"
 
 # create "workspace" directory
 RUN mkdir /home/ubuntu/workspace && \
-    chown -R ${HOST_UID}:${HOST_UID} /home/ubuntu
+    chown -R ubuntu:ubuntu /home/ubuntu/workspace
 
 # mark /home/ubuntu/workspace as mount point
 VOLUME /home/ubuntu/workspace
 
 # specify work-dir and user
-WORKDIR /home/ubuntu/workspace
 USER ubuntu
+WORKDIR /home/ubuntu/workspace
 # set container's entrypoint as a infinite process
 ENTRYPOINT ["tail"]
 CMD ["-f","/dev/null"]
